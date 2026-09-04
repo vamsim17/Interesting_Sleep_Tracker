@@ -7,6 +7,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.example.interesting_sleep_tracker.ui.HomeScreen
 import com.example.interesting_sleep_tracker.ui.theme.Interesting_Sleep_TrackerTheme
@@ -16,10 +20,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            // Night-friendly: the app shell is always dark. The prompt screen stays white.
-            Interesting_Sleep_TrackerTheme(darkTheme = true, dynamicColor = false) {
+            var isDarkTheme by rememberSaveable { mutableStateOf(value = true) }
+
+            Interesting_Sleep_TrackerTheme(darkTheme = isDarkTheme, dynamicColor = false) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    HomeScreen(modifier = Modifier.padding(innerPadding))
+                    HomeScreen(
+                        isDarkTheme = isDarkTheme,
+                        onToggleTheme = { isDarkTheme = !isDarkTheme },
+                        modifier = Modifier.padding(innerPadding),
+                    )
                 }
             }
         }

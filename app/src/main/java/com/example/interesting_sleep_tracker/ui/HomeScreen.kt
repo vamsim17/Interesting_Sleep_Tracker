@@ -15,9 +15,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -44,7 +46,11 @@ import com.example.interesting_sleep_tracker.service.SleepTrackingService
 import kotlin.math.roundToInt
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    isDarkTheme: Boolean = true,
+    onToggleTheme: () -> Unit = {},
+) {
     val context = LocalContext.current
     val state by SleepRepository.state.collectAsStateWithLifecycle()
 
@@ -68,12 +74,22 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(
-            text = "Sleep Tracker",
-            fontSize = 26.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "Sleep Tracker",
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+            SubtleThemeToggle(
+                isDarkTheme = isDarkTheme,
+                onToggle = onToggleTheme,
+            )
+        }
         Spacer(Modifier.height(24.dp))
 
         StatusCard(state)
@@ -109,8 +125,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             }
         }
 
-        if (!notificationsAllowed && !state.isSessionRunning &&
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+        if ((!notificationsAllowed) && (!state.isSessionRunning) &&
+            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
         ) {
             Spacer(Modifier.height(12.dp))
             Text(
@@ -135,7 +151,7 @@ private fun StatusCard(state: SleepState) {
                     Spacer(Modifier.height(16.dp))
                     BigMetric(SleepNotifications.formatDuration(state.sleepMinutes), "sleep time")
                     Spacer(Modifier.height(12.dp))
-                    BigMetric("${state.score}", "score / 100")
+                    BigMetric(state.score.toString(), "score / 100")
                     Spacer(Modifier.height(12.dp))
                     Text(
                         "${state.asleepCount} of ${state.totalAnswers} check-ins asleep",
@@ -153,7 +169,7 @@ private fun StatusCard(state: SleepState) {
                 }
 
                 Phase.FINISHED, Phase.IDLE -> {
-                    if (state.lastSessionMinutes != null && state.lastSessionScore != null) {
+                    if ((state.lastSessionMinutes != null) && (state.lastSessionScore != null)) {
                         Text(
                             if (state.phase == Phase.FINISHED) "Session complete" else "Last Session",
                             fontWeight = FontWeight.SemiBold,
@@ -164,7 +180,7 @@ private fun StatusCard(state: SleepState) {
                             "sleep time",
                         )
                         Spacer(Modifier.height(12.dp))
-                        BigMetric("${state.lastSessionScore}", "score / 100")
+                        BigMetric(state.lastSessionScore.toString(), "score / 100")
                     } else {
                         Text("No sleep recorded yet", fontWeight = FontWeight.SemiBold)
                         Spacer(Modifier.height(8.dp))
@@ -235,4 +251,22 @@ private fun hasNotificationPermission(context: android.content.Context): Boolean
     return ContextCompat.checkSelfPermission(
         context, Manifest.permission.POST_NOTIFICATIONS,
     ) == PackageManager.PERMISSION_GRANTED
+}
+
+@Composable
+fun SubtleThemeToggle(
+    isDarkTheme: Boolean,
+    onToggle: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    IconButton(
+        onClick = onToggle,
+        modifier = modifier.size(36.dp),
+    ) {
+        Text(
+            text = if (isDarkTheme) "☼" else "☾",
+            fontSize = 18.sp,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.45f),
+        )
+    }
 }
