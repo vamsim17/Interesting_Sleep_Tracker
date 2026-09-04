@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Sleep Tracker</string>
+
+    <string name="prompt_question">Are you asleep or not asleep?</string>
+    <string name="answer_asleep">Asleep</string>
+    <string name="answer_not_asleep">Not asleep</string>
+    <string name="prompt_countdown">Resets in %1$s if unanswered</string>
+    <string name="prompt_notif_text">Tap to answer before your sleep timer resets.</string>
+
+    <string name="tracking_notif_title">Sleep tracking active</string>
+    <string name="tracking_notif_text">Sleep time %1$s · score %2$d</string>
+    <string name="tracking_notif_awaiting">Waiting for your check-in answer…</string>
+    <string name="reset_notif_text">No response in 5 minutes — sleep timer and score reset to 0.</string>
+
+    <string name="channel_tracking_name">Sleep tracking</string>
+    <string name="channel_tracking_desc">Ongoing status while a sleep session is running.</string>
+    <string name="channel_prompt_name">Sleep check-ins</string>
+    <string name="channel_prompt_desc">Full-screen prompts asking whether you are asleep.</string>
+    <string name="channel_info_name">Session updates</string>
+    <string name="channel_info_desc">Notices such as a session reset.</string>
+</resources>
