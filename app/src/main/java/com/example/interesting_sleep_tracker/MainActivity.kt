@@ -13,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.example.interesting_sleep_tracker.ui.HomeScreen
+import com.example.interesting_sleep_tracker.ui.theme.AppTheme
 import com.example.interesting_sleep_tracker.ui.theme.Interesting_Sleep_TrackerTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,13 +21,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            var isDarkTheme by rememberSaveable { mutableStateOf(value = true) }
+            var selectedTheme by rememberSaveable { mutableStateOf(AppTheme.DARK) }
 
-            Interesting_Sleep_TrackerTheme(darkTheme = isDarkTheme, dynamicColor = false) {
+            Interesting_Sleep_TrackerTheme(appTheme = selectedTheme) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     HomeScreen(
-                        isDarkTheme = isDarkTheme,
-                        onToggleTheme = { isDarkTheme = !isDarkTheme },
+                        selectedTheme = selectedTheme,
+                        onSelectTheme = { selectedTheme = it },
                         modifier = Modifier.padding(innerPadding),
                     )
                 }

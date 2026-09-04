@@ -6,6 +6,7 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,12 +14,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -43,13 +47,14 @@ import com.example.interesting_sleep_tracker.model.Phase
 import com.example.interesting_sleep_tracker.model.SleepState
 import com.example.interesting_sleep_tracker.service.SleepNotifications
 import com.example.interesting_sleep_tracker.service.SleepTrackingService
+import com.example.interesting_sleep_tracker.ui.theme.AppTheme
 import kotlin.math.roundToInt
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    isDarkTheme: Boolean = true,
-    onToggleTheme: () -> Unit = {},
+    selectedTheme: AppTheme = AppTheme.DARK,
+    onSelectTheme: (AppTheme) -> Unit = {},
 ) {
     val context = LocalContext.current
     val state by SleepRepository.state.collectAsStateWithLifecycle()
@@ -85,9 +90,9 @@ fun HomeScreen(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
             )
-            SubtleThemeToggle(
-                isDarkTheme = isDarkTheme,
-                onToggle = onToggleTheme,
+            SubtleThemeMenu(
+                selectedTheme = selectedTheme,
+                onSelectTheme = onSelectTheme,
             )
         }
         Spacer(Modifier.height(24.dp))
@@ -254,19 +259,46 @@ private fun hasNotificationPermission(context: android.content.Context): Boolean
 }
 
 @Composable
-fun SubtleThemeToggle(
-    isDarkTheme: Boolean,
-    onToggle: () -> Unit,
+fun SubtleThemeMenu(
+    selectedTheme: AppTheme,
+    onSelectTheme: (AppTheme) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    IconButton(
-        onClick = onToggle,
-        modifier = modifier.size(36.dp),
-    ) {
-        Text(
-            text = if (isDarkTheme) "☼" else "☾",
-            fontSize = 18.sp,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.45f),
-        )
+    var expanded by remember { mutableStateOf(value = false) }
+
+    Box(modifier = modifier) {
+        IconButton(
+            onClick = { expanded = true },
+            modifier = Modifier.size(36.dp),
+        ) {
+            Text(
+                text = selectedTheme.icon,
+                fontSize = 18.sp,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.65f),
+            )
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            AppTheme.entries.forEach { theme ->
+                DropdownMenuItem(
+                    text = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(theme.icon, fontSize = 16.sp)
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                text = theme.label,
+                                fontWeight = if (theme == selectedTheme) FontWeight.Bold else FontWeight.Normal,
+                            )
+                        }
+                    },
+                    onClick = {
+                        onSelectTheme(theme)
+                        expanded = false
+                    },
+                )
+            }
+        }
     }
 }
