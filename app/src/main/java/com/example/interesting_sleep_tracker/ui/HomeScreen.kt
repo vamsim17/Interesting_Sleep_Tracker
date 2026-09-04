@@ -155,7 +155,7 @@ private fun StatusCard(state: SleepState) {
                 Phase.FINISHED, Phase.IDLE -> {
                     if (state.lastSessionMinutes != null && state.lastSessionScore != null) {
                         Text(
-                            if (state.phase == Phase.FINISHED) "Session complete" else "Last session",
+                            if (state.phase == Phase.FINISHED) "Session complete" else "Last Session",
                             fontWeight = FontWeight.SemiBold,
                         )
                         Spacer(Modifier.height(16.dp))
